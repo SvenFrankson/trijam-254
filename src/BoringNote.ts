@@ -1,9 +1,11 @@
 class BoringNote extends BABYLON.Mesh {
     
     public texture: BABYLON.DynamicTexture;
+    public animatePos = Mummu.AnimationFactory.EmptyVector3Callback;
 
     constructor(public game: Game) {
         super("boring-doc");
+        this.position.y = 2;
         this.rotation.x = Math.PI / 2;
         this.texture = new BABYLON.DynamicTexture("boring-texture", { width: 150, height: 150 });
         this.texture.update();
@@ -11,6 +13,7 @@ class BoringNote extends BABYLON.Mesh {
         material.diffuseTexture = this.texture;
         material.specularColor.copyFromFloats(0, 0, 0);
         this.material = material;
+        this.animatePos = Mummu.AnimationFactory.CreateVector3(this, this, "position");
     }
 
     public drawText(y: number): void {

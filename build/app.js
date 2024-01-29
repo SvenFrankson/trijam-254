@@ -2,6 +2,7 @@ class BoringDoc extends BABYLON.Mesh {
     constructor(game) {
         super("boring-doc");
         this.game = game;
+        this.animatePos = Mummu.AnimationFactory.EmptyVector3Callback;
         this.rotation.x = Math.PI / 2;
         this.texture = new BABYLON.DynamicTexture("boring-texture", { width: 420, height: 600 });
         this.texture.update();
@@ -9,6 +10,7 @@ class BoringDoc extends BABYLON.Mesh {
         material.diffuseTexture = this.texture;
         material.specularColor.copyFromFloats(0, 0, 0);
         this.material = material;
+        this.animatePos = Mummu.AnimationFactory.CreateVector3(this, this, "position");
     }
     drawAny(y, targetWord) {
         let r = Math.random();
@@ -92,19 +94,15 @@ class BoringDoc extends BABYLON.Mesh {
             this.game.randomWord(),
             this.game.randomWord(),
             this.game.randomWord(),
-            this.game.randomWord(),
-            this.game.randomWord(),
-            this.game.randomWord(),
             this.game.randomWord()
         ];
         if (targetWord) {
-            words[Math.floor(10 * Math.random())] = targetWord;
+            words[Math.floor(7 * Math.random())] = targetWord;
         }
         this.texture.drawText(this.game.randomBoringLabel() + " " + words[0] + " " + this.game.randomBoringYear(), 70, y + 25, "20px Arial", "black", undefined);
         // Conclusion
-        this.texture.drawText(words[1] + " " + words[2] + " & " + words[3] + ",", 30, y + 55, "20px Arial", "black", undefined);
-        this.texture.drawText(words[4] + ", " + words[5] + " " + words[6] + ".", 30, y + 85, "20px Arial", "black", undefined);
-        this.texture.drawText(words[7] + ". " + words[8] + " ? " + words[9] + ".", 30, y + 115, "20px Arial", "black", undefined);
+        this.texture.drawText(words[1] + " " + words[2] + " & " + words[3] + ",", 30, y + 65, "22px Arial", "black", undefined);
+        this.texture.drawText(words[4] + ". " + words[5] + " ? " + words[6] + ".", 30, y + 105, "22px Arial", "black", undefined);
     }
     instantiate() {
         this.game.generateIndexes();
@@ -133,7 +131,7 @@ class BoringDoc extends BABYLON.Mesh {
         this.drawAny(75, line === 0 ? targetWord : undefined);
         this.drawAny(210, line === 1 ? targetWord : undefined);
         this.drawAny(345, line === 2 ? targetWord : undefined);
-        context.lineWidth = 2;
+        context.lineWidth = 3;
         context.strokeStyle = "black";
         context.strokeRect(-10, 210, 440, 130);
         // Checkboxes
@@ -182,6 +180,8 @@ class BoringNote extends BABYLON.Mesh {
     constructor(game) {
         super("boring-doc");
         this.game = game;
+        this.animatePos = Mummu.AnimationFactory.EmptyVector3Callback;
+        this.position.y = 2;
         this.rotation.x = Math.PI / 2;
         this.texture = new BABYLON.DynamicTexture("boring-texture", { width: 150, height: 150 });
         this.texture.update();
@@ -189,6 +189,7 @@ class BoringNote extends BABYLON.Mesh {
         material.diffuseTexture = this.texture;
         material.specularColor.copyFromFloats(0, 0, 0);
         this.material = material;
+        this.animatePos = Mummu.AnimationFactory.CreateVector3(this, this, "position");
     }
     drawText(y) {
         this.texture.drawText(this.game.randomBoringLabel() + " " + this.game.randomWord(), 70, y + 25, "20px Arial", "black", undefined);
@@ -212,6 +213,7 @@ class BoringNote extends BABYLON.Mesh {
     }
 }
 /// <reference path="../lib/babylon.d.ts"/>
+/// <reference path="../lib/mummu.d.ts"/>
 var BoringWords = [
     "Trade",
     "Growth",
@@ -283,6 +285,8 @@ var BoringYears = [
 ];
 class Game {
     constructor(canvasElement) {
+        this.doneDoc = 0;
+        this.currentNotes = [];
         Game.Instance = this;
         this.canvas = document.getElementById(canvasElement);
         this.canvas.requestPointerLock = this.canvas.requestPointerLock || this.canvas.msRequestPointerLock || this.canvas.mozRequestPointerLock || this.canvas.webkitRequestPointerLock;
@@ -310,16 +314,15 @@ class Game {
         let desk = BABYLON.MeshBuilder.CreateBox("box", { width: 1.5, height: 0.8, depth: 1 });
         desk.position.y = 0.4;
         desk.material = this.deskMat;
-        let doc = new BoringDoc(this);
-        doc.instantiate();
-        doc.position.y = 0.81;
         this.scene.onPointerPick = ((evt, pickInfo) => {
             if (pickInfo.hit) {
-                if (pickInfo.pickedMesh === doc) {
-                    let result = doc.validate(pickInfo.pickedPoint);
+                if (pickInfo.pickedMesh === this.currentDoc) {
+                    let result = this.currentDoc.validate(pickInfo.pickedPoint);
                     if (result >= 0) {
-                        if (result === doc.result) {
+                        if (result === this.currentDoc.result) {
                             console.log("good job");
+                            this.doneDoc++;
+                            this.newAssignement();
                         }
                         else {
                             console.log("bad job");
@@ -328,21 +331,30 @@ class Game {
                 }
             }
         });
+        this.newAssignement();
+    }
+    async newAssignement() {
+        if (this.currentDoc) {
+            await this.currentDoc.animatePos(new BABYLON.Vector3(0.4 + 0.01 * Math.random(), 0.81 + this.doneDoc * 0.005, 0.2 + 0.01 * Math.random()), 1);
+        }
+        for (let i = 0; i < this.currentNotes.length; i++) {
+            this.currentNotes[i].dispose();
+        }
+        this.currentDoc = new BoringDoc(this);
+        this.currentDoc.instantiate();
+        this.currentDoc.position.x = -1;
+        this.currentDoc.position.y = 1;
+        this.currentDoc.animatePos(new BABYLON.Vector3(0, 0.81, 0), 1);
         let note = new BoringNote(this);
         note.instantiate("AA", this.randomBoringColor(), BoringWords[this.aaIndexes[0]], BoringWords[this.aaIndexes[1]], BoringWords[this.aaIndexes[2]]);
-        note.position.y = 0.81;
-        note.position.x = -0.15;
-        note.position.z = 0.25;
+        note.animatePos(new BABYLON.Vector3(-0.22 + Math.random() * 0.06, 0.81, 0.22 + Math.random() * 0.06), 1);
         let noteA = new BoringNote(this);
         noteA.instantiate("A", this.randomBoringColor(), BoringWords[this.aIndexes[0]], BoringWords[this.aIndexes[1]]);
-        noteA.position.y = 0.81;
-        noteA.position.x = 0;
-        noteA.position.z = 0.30;
+        noteA.animatePos(new BABYLON.Vector3(-0.07 + Math.random() * 0.06, 0.81, 0.22 + Math.random() * 0.06), 1);
         let noteF = new BoringNote(this);
         noteF.instantiate("F", this.randomBoringColor(), BoringWords[this.fIndex]);
-        noteF.position.y = 0.81;
-        noteF.position.x = 0.2;
-        noteF.position.z = 0.23;
+        noteF.animatePos(new BABYLON.Vector3(0.17 + Math.random() * 0.06, 0.81, 0.22 + Math.random() * 0.06), 1);
+        this.currentNotes = [note, noteA, noteF];
     }
     generateIndexes() {
         this.aaIndexes = [];
@@ -351,7 +363,7 @@ class Game {
             let r1 = Math.floor(Math.random() * BoringWords.length);
             let r2 = Math.floor(Math.random() * BoringWords.length);
             let r3 = Math.floor(Math.random() * BoringWords.length);
-            if (r1 != r2 && r2 != r3) {
+            if (r1 != r2 && r2 != r3 && r1 != r3) {
                 ok = true;
                 this.aaIndexes = [r1, r2, r3];
             }

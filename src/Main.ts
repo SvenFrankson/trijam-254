@@ -1,4 +1,5 @@
 /// <reference path="../lib/babylon.d.ts"/>
+/// <reference path="../lib/mummu.d.ts"/>
 
 var BoringWords = [
     "Trade",
@@ -103,6 +104,9 @@ class Game {
 		this.engine = new BABYLON.Engine(this.canvas, true);
 		BABYLON.Engine.ShadersRepository = "./shaders/";
 	}
+    public doneDoc: number = 0;
+    public currentDoc: BoringDoc;
+    public currentNotes: BoringNote[] = [];
 
     public async createScene(): Promise<void> {
         this.scene = new BABYLON.Scene(this.engine);
@@ -127,17 +131,15 @@ class Game {
         desk.position.y = 0.4;
         desk.material = this.deskMat;
         
-        let doc = new BoringDoc(this);
-        doc.instantiate();
-        doc.position.y = 0.81;
-        
         this.scene.onPointerPick = ((evt, pickInfo) => {
             if (pickInfo.hit) {
-                if (pickInfo.pickedMesh === doc) {
-                    let result = doc.validate(pickInfo.pickedPoint);
+                if (pickInfo.pickedMesh === this.currentDoc) {
+                    let result = this.currentDoc.validate(pickInfo.pickedPoint);
                     if (result >= 0) {
-                        if (result === doc.result) {
+                        if (result === this.currentDoc.result) {
                             console.log("good job");
+                            this.doneDoc++;
+                            this.newAssignement();
                         }
                         else {
                             console.log("bad job");
@@ -146,25 +148,49 @@ class Game {
                 }
             }
         })
+        this.newAssignement();
+	}
+
+    public async newAssignement(): Promise<void> {
+        if (this.currentDoc) {
+            await this.currentDoc.animatePos(new BABYLON.Vector3(0.4 + 0.01 * Math.random(), 0.81 + this.doneDoc * 0.005, 0.2 + 0.01 * Math.random()), 1);
+        }
+        for (let i = 0; i < this.currentNotes.length; i++) {
+            this.currentNotes[i].dispose();
+        }
+        
+        this.currentDoc = new BoringDoc(this);
+        this.currentDoc.instantiate();
+        this.currentDoc.position.x = -1;
+        this.currentDoc.position.y = 1;
+        this.currentDoc.animatePos(new BABYLON.Vector3(0, 0.81, 0), 1);
         
         let note = new BoringNote(this);
         note.instantiate("AA", this.randomBoringColor(), BoringWords[this.aaIndexes[0]], BoringWords[this.aaIndexes[1]], BoringWords[this.aaIndexes[2]]);
-        note.position.y = 0.81;
-        note.position.x = -0.15;
-        note.position.z = 0.25;
+        note.animatePos(new BABYLON.Vector3(
+            -0.22 + Math.random() * 0.06,
+            0.81,
+            0.22 + Math.random() * 0.06
+        ), 1);
         
         let noteA = new BoringNote(this);
         noteA.instantiate("A", this.randomBoringColor(), BoringWords[this.aIndexes[0]], BoringWords[this.aIndexes[1]]);
-        noteA.position.y = 0.81;
-        noteA.position.x = 0;
-        noteA.position.z = 0.30;
+        noteA.animatePos(new BABYLON.Vector3(
+            -0.07 + Math.random() * 0.06,
+            0.81,
+            0.22 + Math.random() * 0.06
+        ), 1);
         
         let noteF = new BoringNote(this);
         noteF.instantiate("F", this.randomBoringColor(), BoringWords[this.fIndex]);
-        noteF.position.y = 0.81;
-        noteF.position.x = 0.2;
-        noteF.position.z = 0.23;
-	}
+        noteF.animatePos(new BABYLON.Vector3(
+            0.17 + Math.random() * 0.06,
+            0.81,
+            0.22 + Math.random() * 0.06
+        ), 1);
+
+        this.currentNotes = [note, noteA, noteF];
+    }
 
     public generateIndexes(): void {
         this.aaIndexes = [];
@@ -173,7 +199,7 @@ class Game {
             let r1 = Math.floor(Math.random() * BoringWords.length);
             let r2 = Math.floor(Math.random() * BoringWords.length);
             let r3 = Math.floor(Math.random() * BoringWords.length);
-            if (r1 != r2 && r2 != r3) {
+            if (r1 != r2 && r2 != r3 && r1 != r3) {
                 ok = true;
                 this.aaIndexes = [r1, r2, r3];
             }

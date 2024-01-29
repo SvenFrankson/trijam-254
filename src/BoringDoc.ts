@@ -1,6 +1,7 @@
 class BoringDoc extends BABYLON.Mesh {
     
     public texture: BABYLON.DynamicTexture;
+    public animatePos = Mummu.AnimationFactory.EmptyVector3Callback;
 
     constructor(public game: Game) {
         super("boring-doc");
@@ -11,6 +12,7 @@ class BoringDoc extends BABYLON.Mesh {
         material.diffuseTexture = this.texture;
         material.specularColor.copyFromFloats(0, 0, 0);
         this.material = material;
+        this.animatePos = Mummu.AnimationFactory.CreateVector3(this, this, "position");
     }
 
     public drawAny(y: number, targetWord?: string): void {
@@ -106,21 +108,17 @@ class BoringDoc extends BABYLON.Mesh {
             this.game.randomWord(),
             this.game.randomWord(),
             this.game.randomWord(),
-            this.game.randomWord(),
-            this.game.randomWord(),
-            this.game.randomWord(),
             this.game.randomWord()
         ];
         if (targetWord) {
-            words[Math.floor(10 * Math.random())] = targetWord;
+            words[Math.floor(7 * Math.random())] = targetWord;
         }
 
         this.texture.drawText(this.game.randomBoringLabel() +  " " + words[0] + " " + this.game.randomBoringYear(), 70, y + 25, "20px Arial", "black", undefined);
 
         // Conclusion
-        this.texture.drawText(words[1] + " " + words[2] + " & " + words[3] + ",", 30, y + 55, "20px Arial", "black", undefined);
-        this.texture.drawText(words[4] + ", " + words[5] + " " + words[6] + ".", 30, y + 85, "20px Arial", "black", undefined);
-        this.texture.drawText(words[7] + ". " + words[8] + " ? " + words[9] + ".", 30, y + 115, "20px Arial", "black", undefined);
+        this.texture.drawText(words[1] + " " + words[2] + " & " + words[3] + ",", 30, y + 65, "22px Arial", "black", undefined);
+        this.texture.drawText(words[4] + ". " + words[5] + " ? " + words[6] + ".", 30, y + 105, "22px Arial", "black", undefined);
     }
 
     public result: number;
@@ -158,7 +156,7 @@ class BoringDoc extends BABYLON.Mesh {
         this.drawAny(210, line === 1 ? targetWord : undefined);
         this.drawAny(345, line === 2 ? targetWord : undefined);
 
-        context.lineWidth = 2;
+        context.lineWidth = 3;
         context.strokeStyle = "black";
         
         context.strokeRect(-10, 210, 440, 130);
