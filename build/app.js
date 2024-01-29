@@ -486,7 +486,7 @@ class Game {
             }
             this.camera.rotation.x = Math.max(Math.min(this.camera.rotation.x, Math.PI / 3), -Math.PI / 8);
             this.camera.rotation.y = Math.max(Math.min(this.camera.rotation.y, Math.PI / 3.5), -Math.PI / 3.5);
-            this.camera.position.copyFrom(new BABYLON.Vector3(0, 1.3, -0.4));
+            //this.camera.position.copyFrom(new BABYLON.Vector3(0, 1.3, - 0.4));
         });
         window.addEventListener("resize", () => {
             this.engine.resize();
