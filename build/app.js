@@ -342,6 +342,8 @@ class Game {
         motivation3.position.x = 2;
         motivation3.scaling.copyFromFloats(3, 3, 3);
         let room = BABYLON.SceneLoader.ImportMesh("", "./datas/room.babylon");
+        let audioElement = new Audio("./datas/office-ambience-6322.mp3");
+        audioElement.loop = true;
         this.scene.onPointerPick = ((evt, pickInfo) => {
             if (pickInfo.hit) {
                 if (pickInfo.pickedMesh === this.currentDoc) {
@@ -362,6 +364,7 @@ class Game {
         });
         document.getElementById("play").onclick = () => {
             this.play();
+            audioElement.play();
         };
     }
     play() {
