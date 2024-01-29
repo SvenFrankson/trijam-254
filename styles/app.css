@@ -23,3 +23,35 @@ body {
     left: calc((100vw - min(100vw, 100vh)) * 0.5);
     top: calc((100vh - min(100vw, 100vh)) * 0.5);
 }
+
+#gameover-screen {
+    position: fixed;
+    left: calc((100vw - min(100vw, 100vh)) * 0.5);
+    top: calc((100vh - min(100vw, 100vh)) * 0.5);
+    width: min(100vw, 100vh);
+    height: min(100vw, 100vh);
+
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+#gameover-screen div {
+    font-size: min(3.5vw, 3.5vh);
+    color: white;
+    background-color: #303030;
+    margin: min(0.5vw, 0.5vh);
+}
+
+#play {
+    position: fixed;
+    width: min(20vw, 20vh);
+    left: calc((100vw - min(20vw, 20vh)) * 0.5);
+    bottom: calc((100vh - min(10vw, 10vh)) * 0.2);
+    color: white;
+    background-color: #303030;
+    border: 3px solid white;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    font-size: min(6vw, 6vh);
+    padding: min(2vw, 2vh);
+}

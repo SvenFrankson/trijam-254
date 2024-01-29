@@ -285,8 +285,9 @@ var BoringYears = [
 ];
 class Game {
     constructor(canvasElement) {
-        this.doneDoc = 0;
+        this.doneDocs = [];
         this.currentNotes = [];
+        this.timer = 0;
         Game.Instance = this;
         this.canvas = document.getElementById(canvasElement);
         this.canvas.requestPointerLock = this.canvas.requestPointerLock || this.canvas.msRequestPointerLock || this.canvas.mozRequestPointerLock || this.canvas.webkitRequestPointerLock;
@@ -321,21 +322,50 @@ class Game {
                     if (result >= 0) {
                         if (result === this.currentDoc.result) {
                             console.log("good job");
-                            this.doneDoc++;
                             this.newAssignement();
                         }
                         else {
-                            console.log("bad job");
+                            setTimeout(() => {
+                                this.gameover();
+                            }, 1000);
                         }
                     }
                 }
             }
         });
+        document.getElementById("play").onclick = () => {
+            this.play();
+        };
+    }
+    play() {
+        this.timer = 0;
+        this.doneDocs.forEach(doneDoc => {
+            doneDoc.dispose();
+        });
+        this.doneDocs = [];
+        if (this.currentDoc) {
+            this.currentDoc.dispose();
+            this.currentDoc = undefined;
+        }
         this.newAssignement();
+        document.getElementById("gameover-screen").style.display = "none";
+        document.getElementById("play").style.display = "none";
+    }
+    gameover() {
+        let h = Math.floor(this.timer / 3600);
+        let t = this.timer - h * 3600;
+        let m = Math.floor(t / 60);
+        let s = t - m * 60;
+        document.getElementById("hours").innerText = h.toFixed(0) + " hours, " + m.toFixed(0) + " minutes, " + s.toFixed(0) + " seconds.";
+        document.getElementById("count").innerText = this.doneDocs.length.toFixed(0);
+        document.getElementById("salary").innerText = (0.00323611111 * this.timer).toFixed(2) + " €";
+        document.getElementById("gameover-screen").style.display = "block";
+        document.getElementById("play").style.display = "";
     }
     async newAssignement() {
         if (this.currentDoc) {
-            await this.currentDoc.animatePos(new BABYLON.Vector3(0.4 + 0.01 * Math.random(), 0.81 + this.doneDoc * 0.005, 0.2 + 0.01 * Math.random()), 1);
+            await this.currentDoc.animatePos(new BABYLON.Vector3(0.4 + 0.01 * Math.random(), 0.82 + this.doneDocs.length * 0.005, 0.2 + 0.01 * Math.random()), 1);
+            this.doneDocs.push(this.currentDoc);
         }
         for (let i = 0; i < this.currentNotes.length; i++) {
             this.currentNotes[i].dispose();
@@ -420,6 +450,10 @@ class Game {
     animate() {
         this.engine.runRenderLoop(() => {
             this.scene.render();
+            let dt = this.scene.deltaTime;
+            if (isFinite(dt)) {
+                this.timer += dt / 1000;
+            }
         });
         window.addEventListener("resize", () => {
             this.engine.resize();
