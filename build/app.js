@@ -315,6 +315,32 @@ class Game {
         let desk = BABYLON.MeshBuilder.CreateBox("box", { width: 1.5, height: 0.8, depth: 1 });
         desk.position.y = 0.4;
         desk.material = this.deskMat;
+        let motivation1 = BABYLON.MeshBuilder.CreatePlane("mot1", { width: 0.270, height: 0.380 });
+        let motivation1Material = new BABYLON.StandardMaterial("mot1-mat");
+        motivation1Material.diffuseTexture = new BABYLON.Texture("./datas/motivation-270-380.png");
+        motivation1Material.specularColor.copyFromFloats(0, 0, 0);
+        motivation1.material = motivation1Material;
+        motivation1.position.z = 3.95;
+        motivation1.position.y = 1.4;
+        motivation1.scaling.copyFromFloats(3, 3, 3);
+        let motivation2 = BABYLON.MeshBuilder.CreatePlane("motivation2", { width: 0.270, height: 0.380 });
+        let motivation2Material = new BABYLON.StandardMaterial("motivation2-mat");
+        motivation2Material.diffuseTexture = new BABYLON.Texture("./datas/motivation-280-392.png");
+        motivation2Material.specularColor.copyFromFloats(0, 0, 0);
+        motivation2.material = motivation2Material;
+        motivation2.position.z = 3.95;
+        motivation2.position.y = 1.4;
+        motivation2.position.x = -2;
+        motivation2.scaling.copyFromFloats(3, 3, 3);
+        let motivation3 = BABYLON.MeshBuilder.CreatePlane("motivation3", { width: 0.338, height: 0.450 });
+        let motivation3Material = new BABYLON.StandardMaterial("motivation3-mat");
+        motivation3Material.diffuseTexture = new BABYLON.Texture("./datas/motivation-338-450.png");
+        motivation3Material.specularColor.copyFromFloats(0, 0, 0);
+        motivation3.material = motivation3Material;
+        motivation3.position.z = 3.95;
+        motivation3.position.y = 1.4;
+        motivation3.position.x = 2;
+        motivation3.scaling.copyFromFloats(3, 3, 3);
         let room = BABYLON.SceneLoader.ImportMesh("", "./datas/room.babylon");
         this.scene.onPointerPick = ((evt, pickInfo) => {
             if (pickInfo.hit) {
