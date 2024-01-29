@@ -2,7 +2,7 @@ class BoringDoc extends BABYLON.Mesh {
     
     public texture: BABYLON.DynamicTexture;
 
-    constructor() {
+    constructor(public game: Game) {
         super("boring-doc");
         this.rotation.x = Math.PI / 2;
         this.texture = new BABYLON.DynamicTexture("boring-texture", { width: 420, height: 600 });
@@ -31,7 +31,7 @@ class BoringDoc extends BABYLON.Mesh {
         context.lineWidth = 2;
         context.strokeStyle = "black";
 
-        this.texture.drawText("Report " + randomWord() + " 2024", 70, y + 25, "20px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomBoringLabel() + " " + this.game.randomWord() + " 2024", 70, y + 25, "20px Arial", "black", undefined);
 
         // Bars
         for (let i = 0; i < 9; i++) {
@@ -42,9 +42,9 @@ class BoringDoc extends BABYLON.Mesh {
             context.fillRect(x, y + 115 - h2, 15, h2);
         }
         // Bars label
-        this.texture.drawText(randomWord(), 240, y + 55, "25px Arial", "black", undefined);
-        this.texture.drawText(randomWord(), 240, y + 85, "25px Arial", "black", undefined);
-        this.texture.drawText(randomWord(), 240, y + 115, "25px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord(), 240, y + 55, "25px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord(), 240, y + 85, "25px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord(), 240, y + 115, "25px Arial", "black", undefined);
     }
 
     public drawDiscs(y: number): void {
@@ -52,7 +52,7 @@ class BoringDoc extends BABYLON.Mesh {
         context.lineWidth = 2;
         context.strokeStyle = "black";
 
-        this.texture.drawText("Appendix " + randomWord(), 70, y + 25, "20px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomBoringLabel() +  " " + this.game.randomWord(), 70, y + 25, "20px Arial", "black", undefined);
 
         // Discs
         for (let i = 0; i < 3; i++) {
@@ -68,21 +68,23 @@ class BoringDoc extends BABYLON.Mesh {
         }
 
         // Disc labels
-        this.texture.drawText(randomWord(), 240, y + 55, "25px Arial", "black", undefined);
-        this.texture.drawText(randomWord(), 240, y + 80, "25px Arial", "black", undefined);
-        this.texture.drawText(randomWord(), 120, y + 115, "25px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord(), 240, y + 55, "25px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord(), 240, y + 80, "25px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord(), 120, y + 115, "25px Arial", "black", undefined);
     }
 
     public drawText(y: number): void {
-        this.texture.drawText("Conclusion " + randomWord(), 70, y + 25, "20px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomBoringLabel() +  " " + this.game.randomWord(), 70, y + 25, "20px Arial", "black", undefined);
 
         // Conclusion
-        this.texture.drawText(randomWord() + " " + randomWord() + " " + randomWord(), 30, y + 55, "25px Arial", "black", undefined);
-        this.texture.drawText(randomWord() + " " + randomWord() + " " + randomWord(), 30, y + 85, "25px Arial", "black", undefined);
-        this.texture.drawText(randomWord() + " " + randomWord() + " " + randomWord(), 30, y + 115, "25px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord() + " " + this.game.randomWord() + " & " + this.game.randomWord() + ",", 30, y + 55, "20px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord() + ", " + this.game.randomWord() + " " + this.game.randomWord() + ".", 30, y + 85, "20px Arial", "black", undefined);
+        this.texture.drawText(this.game.randomWord() + ". " + this.game.randomWord() + " ? " + this.game.randomWord() + ".", 30, y + 115, "20px Arial", "black", undefined);
     }
 
     public instantiate(): void {
+        this.game.generateIndexes();
+
         let data = BABYLON.CreatePlaneVertexData({ width: 0.21, height: 0.297 });
         data.applyToMesh(this);
 
@@ -91,7 +93,7 @@ class BoringDoc extends BABYLON.Mesh {
         context.strokeStyle = "black";
 
         // Title
-        this.texture.drawText(randomWord() + " 2024", 80, 50, "35px Arial", "black", "white");
+        this.texture.drawText(this.game.randomWord() + " 2024", 80, 50, "35px Arial", "black", "white");
         
         // First line
         if (Math.random() > 0.5) {
