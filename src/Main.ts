@@ -45,6 +45,20 @@ var BoringColors = [
     "yellow"
 ]
 
+var BoringInkColors = [
+    "black",
+    "black",
+    "black",
+    "black",
+    "black",
+    "black",
+    "red",
+    "red",
+    "red",
+    "blue",
+    "green",
+]
+
 var BoringYears = [
     "1998",
     "2024",
@@ -75,6 +89,7 @@ class Game {
     public light: BABYLON.HemisphericLight;
 
     public deskMat: BABYLON.StandardMaterial;
+    public checkMat: BABYLON.StandardMaterial;
 
     public aaIndexes: number[];
     public aIndexes: number[];
@@ -104,6 +119,10 @@ class Game {
         this.deskMat.diffuseColor = BABYLON.Color3.FromHexString("#aeb2bd");
         this.deskMat.specularColor.copyFromFloats(0, 0, 0);
 
+        this.checkMat = new BABYLON.StandardMaterial("check-mat");
+        this.checkMat.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        this.checkMat.specularColor.copyFromFloats(0, 0, 0);
+
         let desk = BABYLON.MeshBuilder.CreateBox("box", { width: 1.5, height: 0.8, depth: 1 });
         desk.position.y = 0.4;
         desk.material = this.deskMat;
@@ -111,6 +130,22 @@ class Game {
         let doc = new BoringDoc(this);
         doc.instantiate();
         doc.position.y = 0.81;
+        
+        this.scene.onPointerPick = ((evt, pickInfo) => {
+            if (pickInfo.hit) {
+                if (pickInfo.pickedMesh === doc) {
+                    let result = doc.validate(pickInfo.pickedPoint);
+                    if (result >= 0) {
+                        if (result === doc.result) {
+                            console.log("good job");
+                        }
+                        else {
+                            console.log("bad job");
+                        }
+                    }
+                }
+            }
+        })
         
         let note = new BoringNote(this);
         note.instantiate("AA", this.randomBoringColor(), BoringWords[this.aaIndexes[0]], BoringWords[this.aaIndexes[1]], BoringWords[this.aaIndexes[2]]);
@@ -190,6 +225,10 @@ class Game {
     
     public randomBoringColor(): string {
         return BoringColors[Math.floor(Math.random() * BoringColors.length)];
+    }
+    
+    public randomBoringInkColor(): string {
+        return BoringInkColors[Math.floor(Math.random() * BoringInkColors.length)];
     }
     
     public randomBoringYear(): string {

@@ -44,6 +44,8 @@ class BoringDoc extends BABYLON.Mesh {
         this.texture.drawText(this.game.randomBoringLabel() + " " + words[0] + " " + this.game.randomBoringYear(), 70, y + 25, "20px Arial", "black", undefined);
 
         // Bars
+        context.strokeStyle = this.game.randomBoringInkColor();
+        context.fillStyle = context.strokeStyle;
         for (let i = 0; i < 9; i++) {
             let x = 30 + i * 20;
             let h = 70 * Math.random();
@@ -52,9 +54,9 @@ class BoringDoc extends BABYLON.Mesh {
             context.fillRect(x, y + 115 - h2, 15, h2);
         }
         // Bars label
-        this.texture.drawText(words[1], 240, y + 55, "25px Arial", "black", undefined);
-        this.texture.drawText(words[2], 240, y + 85, "25px Arial", "black", undefined);
-        this.texture.drawText(words[3], 240, y + 115, "25px Arial", "black", undefined);
+        this.texture.drawText(words[1], 240, y + 55, "25px Arial", this.game.randomBoringInkColor(), undefined);
+        this.texture.drawText(words[2], 240, y + 85, "25px Arial", this.game.randomBoringInkColor(), undefined);
+        this.texture.drawText(words[3], 240, y + 115, "25px Arial", this.game.randomBoringInkColor(), undefined);
     }
 
     public drawDiscs(y: number, targetWord?: string): void {
@@ -75,6 +77,8 @@ class BoringDoc extends BABYLON.Mesh {
         this.texture.drawText(this.game.randomBoringLabel() +  " " + words[0] + " " + this.game.randomBoringYear(), 70, y + 25, "20px Arial", "black", undefined);
 
         // Discs
+        context.strokeStyle = this.game.randomBoringInkColor();
+        context.fillStyle = context.strokeStyle;
         for (let i = 0; i < 3; i++) {
             let x = 60 + i * 50;
             let r = 10 + 15 * Math.random();
@@ -88,9 +92,9 @@ class BoringDoc extends BABYLON.Mesh {
         }
 
         // Disc labels
-        this.texture.drawText(words[1], 240, y + 55, "25px Arial", "black", undefined);
-        this.texture.drawText(words[2], 240, y + 80, "25px Arial", "black", undefined);
-        this.texture.drawText(words[3], 120, y + 115, "25px Arial", "black", undefined);
+        this.texture.drawText(words[1], 240, y + 55, "25px Arial", this.game.randomBoringInkColor(), undefined);
+        this.texture.drawText(words[2], 240, y + 80, "25px Arial", this.game.randomBoringInkColor(), undefined);
+        this.texture.drawText(words[3], 120, y + 115, "25px Arial", this.game.randomBoringInkColor(), undefined);
     }
 
     public drawText(y: number, targetWord?: string): void {
@@ -119,6 +123,7 @@ class BoringDoc extends BABYLON.Mesh {
         this.texture.drawText(words[7] + ". " + words[8] + " ? " + words[9] + ".", 30, y + 115, "20px Arial", "black", undefined);
     }
 
+    public result: number;
     public instantiate(): void {
         this.game.generateIndexes();
 
@@ -130,16 +135,16 @@ class BoringDoc extends BABYLON.Mesh {
         context.strokeStyle = "black";
 
         let targetWord: string;
-        let result = Math.floor(Math.random() * 4);
-        if (result === 0) {
+        this.result = Math.floor(Math.random() * 4);
+        if (this.result === 0) {
             let n = Math.floor(Math.random() * 3);
             targetWord = BoringWords[this.game.aaIndexes[n]];
         }
-        if (result === 1) {
+        if (this.result === 1) {
             let n = Math.floor(Math.random() * 2);
             targetWord = BoringWords[this.game.aIndexes[n]];
         }
-        if (result === 2) {
+        if (this.result === 2) {
             targetWord = BoringWords[this.game.fIndex];
         }
         console.log(targetWord);
@@ -153,21 +158,11 @@ class BoringDoc extends BABYLON.Mesh {
         this.drawAny(210, line === 1 ? targetWord : undefined);
         this.drawAny(345, line === 2 ? targetWord : undefined);
 
-        // First line
-        if (Math.random() > 0.5) {
-            context.strokeRect(-10, 75, 440, 130);
-        }
+        context.lineWidth = 2;
+        context.strokeStyle = "black";
         
-        // Second line
-        if (Math.random() > 0.5) {
-            context.strokeRect(-10, 210, 440, 130);
-        }
+        context.strokeRect(-10, 210, 440, 130);
         
-        // Third line
-        if (Math.random() > 0.5) {
-            context.strokeRect(-10, 345, 440, 130);
-        }
-
         // Checkboxes
         context.strokeRect(30, 530, 30, 30);
         this.texture.drawText("AA", 65, 555, "25px Arial", "black", undefined);
@@ -182,5 +177,39 @@ class BoringDoc extends BABYLON.Mesh {
         context.strokeRect(300, 510, 90, 50);
 
         this.texture.update();
+    }
+
+    public validate(point: BABYLON.Vector3): number {
+        let check = BABYLON.MeshBuilder.CreateBox("check", { width: 0.01, depth: 0.001, height: 0.01 });
+        check.material = this.game.checkMat;
+        
+        let local = BABYLON.Vector3.TransformCoordinates(point, this.getWorldMatrix().clone().invert());
+        check.position.copyFrom(local);
+        check.parent = this;
+
+        let x = (local.x + 0.21 * 0.5) / 0.21 * 420;
+        let y = (1 - (local.y + 0.297 * 0.5) / 0.297) * 600;
+        if (x > 30 && x < 60) {
+            if (y > 530 && y < 560) {
+                return 0;
+            }
+        }
+        if (x > 120 && x < 150) {
+            if (y > 530 && y < 560) {
+                return 1;
+            }
+        }
+        if (x > 210 && x < 240) {
+            if (y > 530 && y < 560) {
+                return 2;
+            }
+        }
+        if (x > 300 && x < 390) {
+            if (y > 510 && y < 560) {
+                return 3;
+            }
+        }
+
+        return -1;
     }
 }
