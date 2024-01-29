@@ -1,0 +1,25 @@
+html {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    touch-action: none;
+}
+
+body {
+    background-color: black;
+}
+
+.debug-log {
+    position: relative;
+    color: red;
+    z-index: 1;
+	font-family: monospace;
+}
+
+#render-canvas.square {
+    width: min(100vw, 100vh);
+    height: min(100vw, 100vh);
+    position: fixed;
+    left: calc((100vw - min(100vw, 100vh)) * 0.5);
+    top: calc((100vh - min(100vw, 100vh)) * 0.5);
+}
