@@ -300,7 +300,7 @@ class Game {
     async createScene() {
         this.scene = new BABYLON.Scene(this.engine);
         this.scene.clearColor = BABYLON.Color4.FromHexString("#272b2e");
-        this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(0, 1, 0)).normalize(), this.scene);
+        this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(2, 3, -1)).normalize(), this.scene);
         this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1.3, -0.4));
         this.camera.minZ = 0.1;
         this.camera.maxZ = 10;
@@ -315,6 +315,7 @@ class Game {
         let desk = BABYLON.MeshBuilder.CreateBox("box", { width: 1.5, height: 0.8, depth: 1 });
         desk.position.y = 0.4;
         desk.material = this.deskMat;
+        let room = BABYLON.SceneLoader.ImportMesh("", "./datas/room.babylon");
         this.scene.onPointerPick = ((evt, pickInfo) => {
             if (pickInfo.hit) {
                 if (pickInfo.pickedMesh === this.currentDoc) {
@@ -380,7 +381,7 @@ class Game {
         note.animatePos(new BABYLON.Vector3(-0.22 + Math.random() * 0.06, 0.81, 0.22 + Math.random() * 0.06), 1);
         let noteA = new BoringNote(this);
         noteA.instantiate("A", this.randomBoringColor(), BoringWords[this.aIndexes[0]], BoringWords[this.aIndexes[1]]);
-        noteA.animatePos(new BABYLON.Vector3(-0.07 + Math.random() * 0.06, 0.81, 0.22 + Math.random() * 0.06), 1);
+        noteA.animatePos(new BABYLON.Vector3(-0.07 + Math.random() * 0.06, 0.815, 0.22 + Math.random() * 0.06), 1);
         let noteF = new BoringNote(this);
         noteF.instantiate("F", this.randomBoringColor(), BoringWords[this.fIndex]);
         noteF.animatePos(new BABYLON.Vector3(0.17 + Math.random() * 0.06, 0.81, 0.22 + Math.random() * 0.06), 1);
@@ -454,6 +455,9 @@ class Game {
             if (isFinite(dt)) {
                 this.timer += dt / 1000;
             }
+            this.camera.rotation.x = Math.max(Math.min(this.camera.rotation.x, Math.PI / 3), -Math.PI / 8);
+            this.camera.rotation.y = Math.max(Math.min(this.camera.rotation.y, Math.PI / 3.5), -Math.PI / 3.5);
+            this.camera.position.copyFrom(new BABYLON.Vector3(0, 1.3, -0.4));
         });
         window.addEventListener("resize", () => {
             this.engine.resize();
