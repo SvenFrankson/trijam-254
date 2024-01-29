@@ -10,23 +10,32 @@ class BoringDoc extends BABYLON.Mesh {
         material.specularColor.copyFromFloats(0, 0, 0);
         this.material = material;
     }
-    drawAny(y) {
+    drawAny(y, targetWord) {
         let r = Math.random();
         if (r < 1 / 3) {
-            return this.drawBars(y);
+            return this.drawBars(y, targetWord);
         }
         else if (r < 2 / 3) {
-            return this.drawDiscs(y);
+            return this.drawDiscs(y, targetWord);
         }
         else {
-            return this.drawText(y);
+            return this.drawText(y, targetWord);
         }
     }
-    drawBars(y) {
+    drawBars(y, targetWord) {
         let context = this.texture.getContext();
         context.lineWidth = 2;
         context.strokeStyle = "black";
-        this.texture.drawText(this.game.randomBoringLabel() + " " + this.game.randomWord() + " 2024", 70, y + 25, "20px Arial", "black", undefined);
+        let words = [
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord()
+        ];
+        if (targetWord) {
+            words[Math.floor(4 * Math.random())] = targetWord;
+        }
+        this.texture.drawText(this.game.randomBoringLabel() + " " + words[0] + " " + this.game.randomBoringYear(), 70, y + 25, "20px Arial", "black", undefined);
         // Bars
         for (let i = 0; i < 9; i++) {
             let x = 30 + i * 20;
@@ -36,15 +45,24 @@ class BoringDoc extends BABYLON.Mesh {
             context.fillRect(x, y + 115 - h2, 15, h2);
         }
         // Bars label
-        this.texture.drawText(this.game.randomWord(), 240, y + 55, "25px Arial", "black", undefined);
-        this.texture.drawText(this.game.randomWord(), 240, y + 85, "25px Arial", "black", undefined);
-        this.texture.drawText(this.game.randomWord(), 240, y + 115, "25px Arial", "black", undefined);
+        this.texture.drawText(words[1], 240, y + 55, "25px Arial", "black", undefined);
+        this.texture.drawText(words[2], 240, y + 85, "25px Arial", "black", undefined);
+        this.texture.drawText(words[3], 240, y + 115, "25px Arial", "black", undefined);
     }
-    drawDiscs(y) {
+    drawDiscs(y, targetWord) {
         let context = this.texture.getContext();
         context.lineWidth = 2;
         context.strokeStyle = "black";
-        this.texture.drawText(this.game.randomBoringLabel() + " " + this.game.randomWord(), 70, y + 25, "20px Arial", "black", undefined);
+        let words = [
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord()
+        ];
+        if (targetWord) {
+            words[Math.floor(4 * Math.random())] = targetWord;
+        }
+        this.texture.drawText(this.game.randomBoringLabel() + " " + words[0] + " " + this.game.randomBoringYear(), 70, y + 25, "20px Arial", "black", undefined);
         // Discs
         for (let i = 0; i < 3; i++) {
             let x = 60 + i * 50;
@@ -58,16 +76,31 @@ class BoringDoc extends BABYLON.Mesh {
             context.fill();
         }
         // Disc labels
-        this.texture.drawText(this.game.randomWord(), 240, y + 55, "25px Arial", "black", undefined);
-        this.texture.drawText(this.game.randomWord(), 240, y + 80, "25px Arial", "black", undefined);
-        this.texture.drawText(this.game.randomWord(), 120, y + 115, "25px Arial", "black", undefined);
+        this.texture.drawText(words[1], 240, y + 55, "25px Arial", "black", undefined);
+        this.texture.drawText(words[2], 240, y + 80, "25px Arial", "black", undefined);
+        this.texture.drawText(words[3], 120, y + 115, "25px Arial", "black", undefined);
     }
-    drawText(y) {
-        this.texture.drawText(this.game.randomBoringLabel() + " " + this.game.randomWord(), 70, y + 25, "20px Arial", "black", undefined);
+    drawText(y, targetWord) {
+        let words = [
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord(),
+            this.game.randomWord()
+        ];
+        if (targetWord) {
+            words[Math.floor(10 * Math.random())] = targetWord;
+        }
+        this.texture.drawText(this.game.randomBoringLabel() + " " + words[0] + " " + this.game.randomBoringYear(), 70, y + 25, "20px Arial", "black", undefined);
         // Conclusion
-        this.texture.drawText(this.game.randomWord() + " " + this.game.randomWord() + " & " + this.game.randomWord() + ",", 30, y + 55, "20px Arial", "black", undefined);
-        this.texture.drawText(this.game.randomWord() + ", " + this.game.randomWord() + " " + this.game.randomWord() + ".", 30, y + 85, "20px Arial", "black", undefined);
-        this.texture.drawText(this.game.randomWord() + ". " + this.game.randomWord() + " ? " + this.game.randomWord() + ".", 30, y + 115, "20px Arial", "black", undefined);
+        this.texture.drawText(words[1] + " " + words[2] + " & " + words[3] + ",", 30, y + 55, "20px Arial", "black", undefined);
+        this.texture.drawText(words[4] + ", " + words[5] + " " + words[6] + ".", 30, y + 85, "20px Arial", "black", undefined);
+        this.texture.drawText(words[7] + ". " + words[8] + " ? " + words[9] + ".", 30, y + 115, "20px Arial", "black", undefined);
     }
     instantiate() {
         this.game.generateIndexes();
@@ -76,23 +109,38 @@ class BoringDoc extends BABYLON.Mesh {
         let context = this.texture.getContext();
         context.lineWidth = 2;
         context.strokeStyle = "black";
+        let targetWord;
+        let result = Math.floor(Math.random() * 4);
+        if (result === 0) {
+            let n = Math.floor(Math.random() * 3);
+            targetWord = BoringWords[this.game.aaIndexes[n]];
+        }
+        if (result === 1) {
+            let n = Math.floor(Math.random() * 2);
+            targetWord = BoringWords[this.game.aIndexes[n]];
+        }
+        if (result === 2) {
+            targetWord = BoringWords[this.game.fIndex];
+        }
+        console.log(targetWord);
+        let line = Math.floor(Math.random() * 3);
         // Title
-        this.texture.drawText(this.game.randomWord() + " 2024", 80, 50, "35px Arial", "black", "white");
+        this.texture.drawText(this.game.randomWord() + " " + this.game.randomBoringYear(), 80, 50, "35px Arial", "black", "white");
+        this.drawAny(75, line === 0 ? targetWord : undefined);
+        this.drawAny(210, line === 1 ? targetWord : undefined);
+        this.drawAny(345, line === 2 ? targetWord : undefined);
         // First line
         if (Math.random() > 0.5) {
             context.strokeRect(-10, 75, 440, 130);
         }
-        this.drawAny(75);
         // Second line
         if (Math.random() > 0.5) {
             context.strokeRect(-10, 210, 440, 130);
         }
-        this.drawAny(210);
         // Third line
         if (Math.random() > 0.5) {
             context.strokeRect(-10, 345, 440, 130);
         }
-        this.drawAny(345);
         // Checkboxes
         context.strokeRect(30, 530, 30, 30);
         this.texture.drawText("AA", 65, 555, "25px Arial", "black", undefined);
@@ -100,7 +148,7 @@ class BoringDoc extends BABYLON.Mesh {
         this.texture.drawText("A", 155, 555, "25px Arial", "black", undefined);
         context.strokeRect(210, 530, 30, 30);
         this.texture.drawText("F", 245, 555, "25px Arial", "black", undefined);
-        this.texture.drawText("VALIDATE", 300, 505, "20px Arial", "black", undefined);
+        this.texture.drawText("N/A", 300, 505, "20px Arial", "black", undefined);
         context.strokeRect(300, 510, 90, 50);
         this.texture.update();
     }
@@ -180,6 +228,20 @@ var BoringColors = [
     "magenta",
     "cyan",
     "yellow"
+];
+var BoringYears = [
+    "1998",
+    "2024",
+    "2023",
+    "2022",
+    "2021",
+    "2020",
+    "2019",
+    "2018",
+    "2017",
+    "",
+    "now",
+    "today"
 ];
 class Game {
     constructor(canvasElement) {
@@ -280,6 +342,9 @@ class Game {
     }
     randomBoringColor() {
         return BoringColors[Math.floor(Math.random() * BoringColors.length)];
+    }
+    randomBoringYear() {
+        return BoringYears[Math.floor(Math.random() * BoringYears.length)];
     }
     animate() {
         this.engine.runRenderLoop(() => {

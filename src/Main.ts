@@ -45,6 +45,21 @@ var BoringColors = [
     "yellow"
 ]
 
+var BoringYears = [
+    "1998",
+    "2024",
+    "2023",
+    "2022",
+    "2021",
+    "2020",
+    "2019",
+    "2018",
+    "2017",
+    "",
+    "now",
+    "today"
+]
+
 class Game {
     
     public static Instance: Game;
@@ -175,6 +190,10 @@ class Game {
     
     public randomBoringColor(): string {
         return BoringColors[Math.floor(Math.random() * BoringColors.length)];
+    }
+    
+    public randomBoringYear(): string {
+        return BoringYears[Math.floor(Math.random() * BoringYears.length)];
     }
 
 	public animate(): void {
