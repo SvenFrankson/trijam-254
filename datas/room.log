@@ -24,8 +24,56 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		num uvs2           :  0
 		num colors         :  0
 		num triangles      :  10
+	processing begun of mesh:  Circle
+		processing begun of material:  Material
+		processing begun of material:  Wall.001
+		processing begun of material:  Material.001
+		processing begun of multimaterial:  room.Multimaterial#1
+		num positions      :  148
+		num normals        :  148
+		num tangents       :  0
+		num uvs            :  296
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  208
+		WARNING: # of 0 area faces found:  16
+	processing begun of mesh:  Circle.001
+		processing begun of material:  Material
+		processing begun of material:  Wall.001
+		processing begun of material:  Material.001
+		registered as also a user of material:  Material
+		registered as also a user of material:  Wall.001
+		registered as also a user of material:  Material.001
+		processing begun of multimaterial:  room.Multimaterial#2
+		num positions      :  148
+		num normals        :  148
+		num tangents       :  0
+		num uvs            :  296
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  208
+		WARNING: # of 0 area faces found:  16
+	processing begun of mesh:  Circle.002
+		processing begun of material:  Material
+		processing begun of material:  Wall.001
+		processing begun of material:  Material.001
+		registered as also a user of material:  Material
+		registered as also a user of material:  Wall.001
+		registered as also a user of material:  Material.001
+		processing begun of multimaterial:  room.Multimaterial#3
+		num positions      :  148
+		num normals        :  148
+		num tangents       :  0
+		num uvs            :  296
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  208
+		WARNING: # of 0 area faces found:  16
 ========= Writing of JSON file started =========
 	writing mesh:  Cube
+	writing mesh:  Circle
+	writing mesh:  Circle.001
+	writing mesh:  Circle.002
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.005 secs
+elapsed time:  0 min, 0.047 secs
